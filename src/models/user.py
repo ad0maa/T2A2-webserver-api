@@ -13,4 +13,3 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default=False)
     # need to add address_id as foreign key
 
-
