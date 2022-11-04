@@ -1,5 +1,5 @@
 from flask import Flask
-from init import db, ma,jwt
+from init import db, ma, jwt, bcrypt
 from controllers.cli_commands import db_commands
 import os
 
