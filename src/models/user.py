@@ -12,3 +12,7 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default=False)
     # need to add address_id as foreign key
 
+class UserSchema(ma.Schema):
+
+    class Meta:
+        fields = ('id', 'username', 'email_address', 'password','admin')
