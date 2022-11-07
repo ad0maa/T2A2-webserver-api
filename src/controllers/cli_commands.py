@@ -1,6 +1,7 @@
 from flask import Blueprint
 from init import db, bcrypt
 from models.user import User, Address
+from models.product import Product
 
 db_commands = Blueprint('db', __name__)
 
@@ -31,7 +32,7 @@ def db_seed():
             user_name = 'adam.tunchay',
             email_address = 'adam.tunchay@me.com',
             password= bcrypt.generate_password_hash('123456').decode('utf8'),
-            address_id = address_id[0]
+            # address_id = address_id[0] 
         )
     ]
 
@@ -51,6 +52,19 @@ def db_seed():
     ]
 
     db.session.add_all(addresses)
+    db.session.commit()
+
+    products = [
+        Product(
+            name = 'Rip Curl Mini-mal',
+            description = 'Mini-mal longboard designed on the surfcoast, Victoria.',
+            length = '8"',
+            volume = '76lt', 
+            price = 799
+        )
+    ]
+
+    db.session.add_all(products)
     db.session.commit()
 
     print('Table Seeding Successful')
