@@ -7,8 +7,8 @@ from flask_jwt_extended import create_access_token, get_jwt_identity
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
-@user_bp.route('/users/', methods=['GET'])
-def get_users():
+@user_bp.route('/view_all/', methods=['GET'])
+def view_all():
     stmt = db.select(User)
     users = db.session.scalars(stmt)
     return UserSchema(many=True, exclude=['password']).dump(users)

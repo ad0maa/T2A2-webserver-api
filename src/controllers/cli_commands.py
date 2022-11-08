@@ -56,11 +56,46 @@ def db_seed():
 
     products = [
         Product(
-            name = 'Rip Curl Mini-mal',
+            name = 'Rip Curl Mini-mal Surfboard',
             description = 'Mini-mal longboard designed on the surfcoast, Victoria.',
-            length = '8"',
-            volume = '76lt', 
-            price = 799
+            length = 8,
+            volume = 64, 
+            price = 750
+        ),
+        Product(
+            name = 'Christenson Fish Surfboard',
+            description = 'Double foil fins with low cant and toe complimented by the twin pin tail allow this board to reach high speeds and insure hold whenever on the rail.',
+            length = 5.6,
+            volume = 32.4, 
+            price = 1399.99
+        ),
+        Product(
+            name = 'Hayden Shapes Hypto Krypto Surfboard',
+            description = 'The Hypto Krypto is a balance of tradition and modern performance. Suited to the elite level surfer to the everyday surfer, it is often referred to as the ‘one board quiver’ for its versatility across all types of surf conditions – from small 1-3 ft beach breaks, to barrels of up to 8ft.',
+            length = 6.4,
+            volume = 43.2, 
+            price = 849.99
+        ),
+        Product(
+            name = 'The Critical Slide Society Loggerhead PU Longboard Surfboard',
+            description = 'The Logger Head is a wide and incredibly stable surfboard. The long parallel rails create a huge stable platform to stand and walk the board, and the full rounded nose is ideal for riding the nose.',
+            length = 9.2,
+            volume = 70, 
+            price = 1295
+        ),
+        Product(
+            name = 'Pyzel Padillac Step Up Surfboard',
+            description = 'It has a clean, flowing rocker, and a light vee bottom with double concaves to give you speed and sensitivity while still maintaining control in heavy conditions. It comes as a quad, for both speed and maneuverability, and can handle anything the ocean throws at you.',
+            length = 7.4,
+            volume = 45.8, 
+            price = 1399
+        ),
+        Product(
+            name = 'Catch Surf Odysea Log 7’0 Softboard',
+            description = 'More is better when it comes to having fun and the LOG delivers! In true Odysea form, the LOG has a classic look and feel with mega-float performance so you can shred with ease and style. So whether you\'re a stoked grom learning to surf or a seasoned vet looking to maximize wave count, the Odysea LOG is for you! The LOG is a legit board designed by real surfers in California. Enjoy!',
+            length = 7,
+            volume = 72, 
+            price = 699.99
         )
     ]
 
