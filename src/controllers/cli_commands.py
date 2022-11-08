@@ -72,7 +72,7 @@ def db_seed():
         Product(
             name = 'Hayden Shapes Hypto Krypto Surfboard',
             description = 'The Hypto Krypto is a balance of tradition and modern performance. Suited to the elite level surfer to the everyday surfer, it is often referred to as the ‘one board quiver’ for its versatility across all types of surf conditions – from small 1-3 ft beach breaks, to barrels of up to 8ft.',
-            length = 6.4,
+            length = 6.2,
             volume = 43.2, 
             price = 849.99
         ),
@@ -86,7 +86,7 @@ def db_seed():
         Product(
             name = 'Pyzel Padillac Step Up Surfboard',
             description = 'It has a clean, flowing rocker, and a light vee bottom with double concaves to give you speed and sensitivity while still maintaining control in heavy conditions. It comes as a quad, for both speed and maneuverability, and can handle anything the ocean throws at you.',
-            length = 7.4,
+            length = 7,
             volume = 45.8, 
             price = 1399
         ),

@@ -15,6 +15,7 @@ class User(db.Model):
     # address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable = True)
 
     address_id = db.Column(db.Integer, db.ForeignKey('addresses.id'), nullable=True)
+    reviews = db.relationship('Reviews', back_populates='user')
 
     # address = db.relationship('Address', back_populates='users', cascade='all, delete')
     # need to add address_id as foreign key
