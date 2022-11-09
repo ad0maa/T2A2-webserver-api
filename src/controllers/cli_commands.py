@@ -27,6 +27,8 @@ def db_seed():
 
     addresses = [
         Address(
+            first_name='John',
+            last_name='Doe',
             street_number=20,
             street='Evergreen Terrace',
             city='Torquay',
@@ -42,13 +44,13 @@ def db_seed():
 
     users = [
         User(
-            user_name='Administrator',
+            name='Administrator',
             email_address='admin@spam.com',
             password=bcrypt.generate_password_hash('password').decode('utf8'),
             admin=True
         ),
         User(
-            user_name='adam.tunchay',
+            name='adam.tunchay',
             email_address='adam.tunchay@me.com',
             password=bcrypt.generate_password_hash('123456').decode('utf8'),
             address=addresses[0]

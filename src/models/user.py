@@ -7,7 +7,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String)
+    name = db.Column(db.String)
     email_address = db.Column(db.String,  nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)   
     admin = db.Column(db.Boolean, default=False)
@@ -19,12 +19,14 @@ class User(db.Model):
 class UserSchema(ma.Schema):
 
     class Meta:
-        fields = ('id', 'user_name', 'email_address', 'password','admin')
+        fields = ('id', 'name', 'email_address', 'password','admin')
 
 class Address(db.Model):
     __tablename__ = 'addresses'
 
     id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String, nullable=False)
+    last_name = db.Column(db.String, nullable=False)
     street_number = db.Column(db.Integer, nullable=False)
     street = db.Column(db.String, nullable=False)
     city = db.Column(db.String, nullable=False)
@@ -38,5 +40,5 @@ class Address(db.Model):
 class AddressSchema(ma.Schema):
 
     class Meta:
-        fields = ('id', 'user_id', 'street_number', 'street','city', 'state', 'post_code', 'country', 'phone_number')
+        fields = ('id', 'user', 'first_name', 'last_name', 'street_number', 'street','city', 'state', 'post_code', 'country', 'phone_number')
         ordered = True

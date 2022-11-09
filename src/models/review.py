@@ -4,6 +4,8 @@ from sqlalchemy import ForeignKey
 from datetime import datetime
 
 
+VALID_RATINGS = (0, 1, 2, 3, 4, 5)
+
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -22,8 +24,16 @@ class Review(db.Model):
 
 class ReviewSchema(ma.Schema):
 
-    # user = fields.Nested('UserSchema', only=('user_name'))
 
     class Meta:
-        fields = ('id', 'user_id', 'product_id', 'title','date', 'comments', 'rating', 'user')
+        fields = ('id', 'user_id', 'product_id', 'title', 'date', 'comments', 'rating', 'user')
         ordered = True
+
+    user = fields.Nested('UserSchema', only=('user_name', 'email_address', 'admin'))
+    product = fields.Nested('ProductSchema', only=('id', 'name', 'description', 'price', 'image_url', 'category_id'))
+
+    # user = fields.Nested('UserSchema', only=('user_name'))
+
+    # class Meta:
+    #     fields = ('id', 'user_id', 'product_id', 'title','date', 'comments', 'rating', 'user')
+    #     ordered = True
