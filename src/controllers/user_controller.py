@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-# from main import app
 from init import db, bcrypt
 from models.user import User, UserSchema
 from flask_jwt_extended import create_access_token, get_jwt_identity

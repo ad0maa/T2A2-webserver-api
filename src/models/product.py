@@ -13,6 +13,8 @@ class Product(db.Model):
     volume = db.Column(db.Integer)
     price = db.Column(db.Numeric(12,2))
 
+    reviews = db.relationship('Review', back_populates='product', cascade="all, delete")
+    
 
 class ProductSchema(ma.Schema):
 

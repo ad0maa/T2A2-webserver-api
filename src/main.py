@@ -3,6 +3,7 @@ from init import db, ma, jwt, bcrypt
 from controllers.cli_commands import db_commands
 from controllers.user_controller import user_bp
 from controllers.product_controller import product_bp
+from controllers.review_controller import review_bp
 import os
 
 
@@ -27,5 +28,6 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(user_bp)
     app.register_blueprint(product_bp)
+    app.register_blueprint(review_bp)
 
     return app
