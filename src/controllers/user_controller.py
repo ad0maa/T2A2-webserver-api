@@ -3,7 +3,6 @@ from init import db, bcrypt
 from models.user import User, UserSchema
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from datetime import timedelta
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
@@ -63,7 +62,7 @@ def login():
         email=request.json['email']).first()
     if user and bcrypt.check_password_hash(user.password, request.json['password']):
         access_token = create_access_token(
-            identity=user.id,  expires_delta=timedelta(days=1))
+            identity=user.id)
         return {'token': access_token}, 200
     else:
         return {'error': 'Invalid login details, please try again.'}, 401

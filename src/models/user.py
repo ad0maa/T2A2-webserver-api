@@ -42,7 +42,7 @@ class Address(db.Model):
     phone_number = db.Column(db.String, nullable=False)
 
     user = db.relationship(
-        'User', back_populates='address', cascade="all, delete")
+        'User', back_populates='address')
 
 
 class AddressSchema(ma.Schema):

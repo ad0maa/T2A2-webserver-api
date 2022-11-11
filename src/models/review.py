@@ -1,11 +1,13 @@
 from init import db, ma
-from marshmallow import fields
-from marshmallow.validate import OneOf
+from marshmallow import fields, validates
+from marshmallow.validate import OneOf, Length
+from marshmallow.exceptions import ValidationError
 from sqlalchemy import ForeignKey
 from datetime import datetime
 
 
 VALID_RATINGS = (0, 1, 2, 3, 4, 5)
+# VALID_RATINGS = ('0', '1', '2', '3', '4', '5')
 
 
 class Review(db.Model):
@@ -15,8 +17,8 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey(
         'products.id'), nullable=False)
-    title = db.Column(db.String, nullable=False)
-    date = db.Column(db.DateTime, nullable=True, default=datetime.now)
+    title = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.now)
     comment = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
 
@@ -28,14 +30,20 @@ class Review(db.Model):
 
 class ReviewSchema(ma.Schema):
 
+    title = fields.String(required=True, validate= Length(min=1, error="Title cannot be blank"))
     rating = fields.Integer(validate= OneOf(VALID_RATINGS))
     date = fields.DateTime(format='%Y-%m-%d %H:%M:%S')
 
+    @validates('rating')
+    def validate_rating(self, value):
+        if value not in VALID_RATINGS:
+            raise ValidationError('Invalid rating')
+
     class Meta:
         fields = ('id', 'user_id', 'product_id', 'title',
-                  'date', 'comment', 'rating', 'user')
+                  'date', 'comment', 'rating', 'user', 'product')
         ordered = True
 
     user = fields.Nested('UserSchema', only=('name',))
     product = fields.Nested('ProductSchema', only=(
-        'id', 'name', 'description', 'price', 'image_url', 'category_id'))
+        'name','price'))

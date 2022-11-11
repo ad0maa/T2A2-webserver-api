@@ -90,6 +90,7 @@ def search_price(query,price):
 @product_bp.route('/<int:product_id>/review', methods=['POST'])
 @jwt_required()
 def create(product_id):
+    data = ReviewSchema().load(request.json)
     stmt = db.select(Product).filter_by(id=product_id)
     card = db.session.scalar(stmt)
 
@@ -110,17 +111,26 @@ def create(product_id):
         return {'error': f'No product found with id {id}'}, 404
 
 
+# Returns all reviews for a product
+@product_bp.route('/<int:product_id>/review', methods=['GET'])
+def view_reviews(product_id):
+    stmt = db.select(Review).filter_by(product_id=product_id)
+    reviews = db.session.scalars(stmt)
+    return ReviewSchema(many=True).dump(reviews)
 
-# @review_bp.route('/<int:product_id>/', methods=['POST'])
-# def create():
-#     review = Review(
-#     user_id = request.json['user_id'],
-#     product_id = request.json['product_id'],
-#     rating = request.json['rating'],
-#     review = request.json['review']
-#     )
+# delete a review
+@product_bp.route('/<int:product_id>/review/<int:review_id>', methods=['DELETE'])
+@jwt_required()
+def delete_review(product_id, review_id):
+    stmt = db.select(Review).filter_by(id=review_id)
+    review = db.session.scalar(stmt)
 
-#     db.session.add(review)
-#     db.session.commit()
-
-#     return ReviewSchema().dump(review), 201
+    if review:
+        if review.user_id == get_jwt_identity():
+            db.session.delete(review)
+            db.session.commit()
+            return ReviewSchema().dump(review)
+        else:
+            return {'error': 'You are not authorized to delete this review'}, 401
+    else:
+        return {'error': f'No review found with id {review_id}'}, 404
