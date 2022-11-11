@@ -9,7 +9,6 @@ db_commands = Blueprint('db', __name__)
 
 # CLI Commands
 
-
 @db_commands.cli.command('create')
 def db_create():
     db.create_all()
@@ -53,7 +52,7 @@ def db_seed():
             name='adam.tunchay',
             email='adam.tunchay@me.com',
             password=bcrypt.generate_password_hash('123456').decode('utf8'),
-            address=addresses[0]
+            # address=addresses[0]
         ),
         User(
             name='mick.hughes',

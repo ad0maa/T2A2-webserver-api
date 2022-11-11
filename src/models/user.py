@@ -11,14 +11,9 @@ class User(db.Model):
     email = db.Column(db.String,  nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     admin = db.Column(db.Boolean, default=False)
-    address_id = db.Column(db.Integer, db.ForeignKey(
-        'addresses.id'), nullable=True)
 
-    address = db.relationship(
-        'Address', back_populates='user', cascade="all, delete")
-    reviews = db.relationship(
-        'Review', back_populates='user', cascade="all, delete")
 
+    reviews = db.relationship('Review', back_populates='user')
 
 class UserSchema(ma.Schema):
 
@@ -40,9 +35,6 @@ class Address(db.Model):
     post_code = db.Column(db.Integer, nullable=False)
     country = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
-
-    user = db.relationship(
-        'User', back_populates='address')
 
 
 class AddressSchema(ma.Schema):
