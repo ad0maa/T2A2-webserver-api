@@ -45,15 +45,27 @@ def db_seed():
     users = [
         User(
             name='Administrator',
-            email_address='admin@spam.com',
+            email='admin@spam.com',
             password=bcrypt.generate_password_hash('password').decode('utf8'),
             admin=True
         ),
         User(
             name='adam.tunchay',
-            email_address='adam.tunchay@me.com',
+            email='adam.tunchay@me.com',
             password=bcrypt.generate_password_hash('123456').decode('utf8'),
             address=addresses[0]
+        ),
+        User(
+            name='mick.hughes',
+            email='michael.hughes@gmail.com',
+            password=bcrypt.generate_password_hash('password').decode('utf8'),
+            # address=addresses[0]
+        ),
+        User(
+            name='elisa.smith',
+            email='elisa.smith@hotmail.com',
+            password=bcrypt.generate_password_hash('password').decode('utf8'),
+            # address=addresses[0]
         )
     ]
 
@@ -114,7 +126,7 @@ def db_seed():
             product=products[0],
             title='Great board',
             rating=5,
-            comments='This board is amazing, I love it!',
+            comment='This board is amazing, I love it!',
             date=date.today()
         ),
         Review(
@@ -122,7 +134,7 @@ def db_seed():
             product=products[1],
             title='Not a fan',
             rating=3,
-            comments='Volume is a bit small for me, but it\'s a great board.'
+            comment='Volume is a bit small for me, but it\'s a great board.'
         )
     ]
 
