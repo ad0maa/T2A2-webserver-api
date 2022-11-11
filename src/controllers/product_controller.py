@@ -8,8 +8,9 @@ from sqlalchemy import and_
 
 product_bp = Blueprint('product', __name__, url_prefix='/product')
 
-
 # Returns all products in database
+
+
 @product_bp.route('/all', methods=['GET'])
 def view_all():
     stmt = db.select(Product)
@@ -17,6 +18,8 @@ def view_all():
     return ProductSchema(many=True).dump(products)
 
 # Returns product by id
+
+
 @product_bp.route('/<int:id>', methods=['GET'])
 def search_id(id):
     stmt = db.select(Product).filter_by(id=id)
@@ -27,9 +30,9 @@ def search_id(id):
         return {'error': f'No item found with id {id}'}, 404
 
 
-#Search for products by length
+# Search for products by length
 @product_bp.route('/length/<string:query>/<int:length>', methods=['GET'])
-def search_length(query,length):
+def search_length(query, length):
     if query == 'min':
         stmt = db.select(Product).filter(and_(Product.length >= length))
         product = db.session.scalars(stmt)
@@ -46,9 +49,9 @@ def search_length(query,length):
         return ProductSchema(many=True).dump(product)
 
 
-# Search for products by volume 
+# Search for products by volume
 @product_bp.route('/volume/<string:query>/<int:volume>', methods=['GET'])
-def search_volume(query,volume):
+def search_volume(query, volume):
     if query == 'min':
         stmt = db.select(Product).filter(and_(Product.volume >= volume))
         product = db.session.scalars(stmt)
@@ -65,9 +68,9 @@ def search_volume(query,volume):
         return ProductSchema(many=True).dump(product)
 
 
-# Search for products by price 
+# Search for products by price
 @product_bp.route('/price/<string:query>/<int:price>', methods=['GET'])
-def search_price(query,price):
+def search_price(query, price):
     if query == 'min':
         stmt = db.select(Product).filter(and_(Product.price >= price))
         product = db.session.scalars(stmt)
@@ -84,7 +87,6 @@ def search_price(query,price):
         return ProductSchema(many=True).dump(product)
 
 
-
 # Reviews
 
 @product_bp.route('/<int:product_id>/review', methods=['POST'])
@@ -96,11 +98,11 @@ def create(product_id):
 
     if card:
         review = Review(
-            user_id = get_jwt_identity(),
-            product_id = product_id,
-            title = request.json['title'],
-            comment = request.json['comment'],
-            rating = request.json['rating']
+            user_id=get_jwt_identity(),
+            product_id=product_id,
+            title=request.json['title'],
+            comment=request.json['comment'],
+            rating=request.json['rating']
         )
 
         db.session.add(review)
@@ -119,6 +121,8 @@ def view_reviews(product_id):
     return ReviewSchema(many=True).dump(reviews)
 
 # delete a review
+
+
 @product_bp.route('/<int:product_id>/review/<int:review_id>', methods=['DELETE'])
 @jwt_required()
 def delete_review(product_id, review_id):

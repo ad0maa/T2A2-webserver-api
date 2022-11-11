@@ -7,7 +7,6 @@ from datetime import datetime
 
 
 VALID_RATINGS = (0, 1, 2, 3, 4, 5)
-# VALID_RATINGS = ('0', '1', '2', '3', '4', '5')
 
 
 class Review(db.Model):
@@ -23,15 +22,15 @@ class Review(db.Model):
     rating = db.Column(db.Integer, nullable=False)
 
     user = db.relationship(
-        'User', back_populates='reviews')
+        'User', back_populates='reviews', cascade="all, delete")
     product = db.relationship(
-        'Product', back_populates='reviews')
+        'Product', back_populates='reviews', cascade = "all, delete")
 
 
 class ReviewSchema(ma.Schema):
 
     title = fields.String(required=True, validate= Length(min=1, error="Title cannot be blank"))
-    rating = fields.Integer(validate= OneOf(VALID_RATINGS))
+    rating = fields.Integer(validate= OneOf(VALID_RATINGS), error= "Rating must be between 0 and 5")
     date = fields.DateTime(format='%Y-%m-%d %H:%M:%S')
 
     @validates('rating')
@@ -44,6 +43,6 @@ class ReviewSchema(ma.Schema):
                   'date', 'comment', 'rating', 'user', 'product')
         ordered = True
 
-    user = fields.Nested('UserSchema', only=('name',))
+    user = fields.Nested('UserSchema', only=['name'])
     product = fields.Nested('ProductSchema', only=(
         'name','price'))

@@ -1,8 +1,9 @@
 from flask import Blueprint
 from init import db, bcrypt
-from models.user import User, Address
+from models.user import User
 from models.product import Product
 from models.review import Review
+from models.address import Address
 from datetime import date
 
 db_commands = Blueprint('db', __name__)
