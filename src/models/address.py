@@ -16,18 +16,17 @@ class Address(db.Model):
     post_code = db.Column(db.Integer, nullable=False)
     country = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
-    # user = db.relationship(
-    #     'User', back_populates='address')
+    user = db.relationship('User', back_populates='address', cascade="all, delete")
 
 
 class AddressSchema(ma.Schema):
 
     class Meta:
         fields = ('id', 'user', 'first_name', 'last_name', 'street_number',
-                  'street', 'city', 'state', 'post_code', 'country', 'phone_number')
+                  'street', 'city', 'state', 'post_code', 'country', 'phone_number', 'user_id')
         ordered = True
-
 
 
 # from init import db, ma

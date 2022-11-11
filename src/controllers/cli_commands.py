@@ -25,23 +25,6 @@ def db_drop():
 @db_commands.cli.command('seed')
 def db_seed():
 
-    addresses = [
-        Address(
-            first_name='John',
-            last_name='Doe',
-            street_number=20,
-            street='Evergreen Terrace',
-            city='Torquay',
-            state='Victoria',
-            post_code=3228,
-            country='Australia',
-            phone_number='0421180150'
-        )
-    ]
-
-    db.session.add_all(addresses)
-    db.session.commit()
-
     users = [
         User(
             name='Administrator',
@@ -70,6 +53,24 @@ def db_seed():
     ]
 
     db.session.add_all(users)
+    db.session.commit()
+
+    addresses = [
+        Address(
+            first_name='John',
+            last_name='Doe',
+            street_number=20,
+            street='Evergreen Terrace',
+            city='Torquay',
+            state='Victoria',
+            post_code=3228,
+            country='Australia',
+            phone_number='0421180150',
+            user= users[0]
+        )
+    ]
+
+    db.session.add_all(addresses)
     db.session.commit()
 
     products = [
