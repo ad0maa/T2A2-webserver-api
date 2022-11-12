@@ -48,7 +48,7 @@ def add_product():
     db.session.add(product)
     db.session.commit()
 
-    return {'message': f'Product - {product.name} has been added successfully.'}, 201
+    return ProductSchema().dump(product), 200
 
 # Route to update product in database if user is admin
 @product_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
@@ -68,7 +68,8 @@ def update_product(id):
 
         db.session.commit()
 
-        return {'message': f'Product - {product.name} has been updated successfully.'}, 200
+
+        return ProductSchema().dump(product), 200
     else:
         return {'error': f'No item found with id {id}'}, 404
 
@@ -177,20 +178,17 @@ def view_reviews(product_id):
     reviews = db.session.scalars(stmt)
     return ReviewSchema(many=True).dump(reviews)
 
-# delete a review
+# Delete a review as admin
 
 @product_bp.route('/<int:product_id>/review/<int:review_id>', methods=['DELETE'])
 @jwt_required()
 def delete_review(product_id, review_id):
+    admin_auth()
     stmt = db.select(Review).filter_by(id=review_id)
     review = db.session.scalar(stmt)
-
     if review:
-        if review.user_id == get_jwt_identity():
-            db.session.delete(review)
-            db.session.commit()
-            return {'message': f'Review {review_id} has been deleted successfully.'}, 202
-        else:
-            return {'error': 'You are not authorized to delete this review'}, 401
+        db.session.delete(review)
+        db.session.commit()
+        return {'message': f'Review {review.id} has been deleted successfully.'}, 202
     else:
-        return {'error': f'No review found with id {review_id}'}, 404
+        return {'error': f'No review found with id {id}'}, 404

@@ -104,11 +104,12 @@ def update_user(id):
         if data.get('password'):
             user.password = bcrypt.generate_password_hash(
                 data.get('password')).decode('utf8') or user.password
-
+    db.session.add(user)
     db.session.commit()
+
     return UserSchema(exclude=['password']).dump(user), 200
 
-# Delete User by id if user is admin
+# Delete User by id as Admin
 
 
 @user_bp.route('/delete/<int:id>', methods=['DELETE'])
@@ -150,14 +151,44 @@ def add_address():
         db.session.commit()
         return AddressSchema().dump(address), 200
     else:
-        return {'error': 'Invalid token'}, 401
+        return {'error': 'Invalid token, please login.'}, 401
 
-
-# Route to view all addresses for a user
-@user_bp.route('/view_addresses/', methods=['GET'])
+# Route to update address as admin by id
+@user_bp.route('/update_address/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
-def view_addresses():
+def update_address(id):
+    admin_auth()
     user_id = get_jwt_identity()
-    stmt = db.select(Address).filter_by(user_id=user_id)
-    addresses = db.session.scalars(stmt)
-    return AddressSchema(many=True).dump(addresses), 200
+    stmt = db.select(Address).filter_by(id=id)
+    address = db.session.scalar(stmt)
+    data = AddressSchema().load(request.json, partial=True)
+    if address:
+        address = Address(
+        first_name = data.get('first_name') or address.first_name,
+        last_name = data.get('last_name') or address.last_name,
+        street_number = data.get('street_number') or address.street_number,
+        street = data.get('street') or address.street,
+        city = data.get('city') or address.city,
+        state = data.get('state') or address.state,
+        post_code = data.get('post_code') or address.post_code,
+        country = data.get('country') or address.country,
+        phone = data.get('phone') or address.phone
+        )
+        db.session.add(address)
+        db.session.commit()
+        return AddressSchema().dump(address), 200
+    else:
+        return {'error': 'Invalid token, please login.'}, 401
+
+
+# Route to view address for a user by id
+@user_bp.route('/view_address/<int:id>', methods=['GET'])
+@jwt_required()
+def view_address(id):
+    admin_auth()
+    stmt = db.select(Address).filter_by(id=id)
+    address = db.session.scalar(stmt)
+    if address:
+        return AddressSchema().dump(address), 200
+    else:
+        return {'error': 'No Address for user with that id'}, 401
