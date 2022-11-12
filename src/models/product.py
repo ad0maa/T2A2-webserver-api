@@ -9,7 +9,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.Text)
-    length = db.Column(db.Integer)   
+    length = db.Column(db.Integer)
     volume = db.Column(db.Integer)
     price = db.Column(db.Numeric(12,2))
 
@@ -19,5 +19,5 @@ class Product(db.Model):
 class ProductSchema(ma.Schema):
 
     class Meta:
-        fields = ('id', 'name', 'description', 'length','volume', 'price')
+        fields = ('id', 'name', 'description', 'format_length','volume', 'price')
         ordered = True

@@ -9,11 +9,6 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 # Authorization Functions
 
-
-def user_auth():
-    stmt = db.select(User).filter_by(id=get_jwt_identity())
-    user = db.session.scalar(stmt)
-
 def admin_auth():
     stmt = db.select(User).filter_by(id=get_jwt_identity())
     user = db.session.scalar(stmt)
@@ -23,7 +18,6 @@ def admin_auth():
 
 
 # Route that allows admin to view all users
-
 
 @user_bp.route('/view_all/', methods=['GET'])
 @jwt_required()

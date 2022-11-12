@@ -2,11 +2,12 @@ from flask import Blueprint, request
 from init import db
 from models.product import Product, ProductSchema
 from models.review import Review, ReviewSchema
+from controllers.user_controller import admin_auth
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import and_
 
 
-product_bp = Blueprint('product', __name__, url_prefix='/product')
+product_bp = Blueprint('product', __name__, url_prefix='/products')
 
 # Returns all products in database
 
@@ -113,6 +114,25 @@ def create(product_id):
         return {'error': f'No product found with id {id}'}, 404
 
 
+
+# Route to add new product to database if user is admin
+@product_bp.route('/add', methods=['POST'])
+@admin_auth
+def add_product():
+    data = ProductSchema().load(request.json)
+    product = Product(
+        name=request.json['name'],
+        length=request.json['length'],
+        volume=request.json['volume'],
+        price=request.json['price'],
+        image=request.json['image']
+    )
+
+    db.session.add(product)
+    db.session.commit()
+
+    return ProductSchema().dump(product), 201
+
 # Returns all reviews for a product
 @product_bp.route('/<int:product_id>/review', methods=['GET'])
 def view_reviews(product_id):
@@ -121,7 +141,6 @@ def view_reviews(product_id):
     return ReviewSchema(many=True).dump(reviews)
 
 # delete a review
-
 
 @product_bp.route('/<int:product_id>/review/<int:review_id>', methods=['DELETE'])
 @jwt_required()
@@ -133,7 +152,7 @@ def delete_review(product_id, review_id):
         if review.user_id == get_jwt_identity():
             db.session.delete(review)
             db.session.commit()
-            return ReviewSchema().dump(review)
+            return {'message': f'Review {review_id} has been deleted successfully.'}, 202
         else:
             return {'error': 'You are not authorized to delete this review'}, 401
     else:

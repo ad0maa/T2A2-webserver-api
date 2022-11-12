@@ -43,6 +43,6 @@ class ReviewSchema(ma.Schema):
                   'date', 'comment', 'rating', 'user', 'product')
         ordered = True
 
-    user = fields.Nested('UserSchema', only=['name'])
+    user = fields.Nested('UserSchema', only=['user_name'])
     product = fields.Nested('ProductSchema', only=(
         'name','price'))
