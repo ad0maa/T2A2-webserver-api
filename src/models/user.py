@@ -1,6 +1,7 @@
 from init import db, ma
 from marshmallow import fields
 from sqlalchemy import ForeignKey
+from models.address import Address, AddressSchema
 
 
 class User(db.Model):
@@ -16,6 +17,8 @@ class User(db.Model):
     address = db.relationship('Address', back_populates='user')
 
 class UserSchema(ma.Schema):
+
+    # address = fields.Nested('AddressSchema', only=('id', 'first_name', 'last_name', 'street_number', 'street', 'city', 'state', 'post_code', 'country', 'phone', 'user_id', 'user'))
 
     address = fields.Nested('AddressSchema', only=('id', 'first_name', 'last_name', 'street_number', 'street', 'city', 'state', 'post_code', 'country', 'phone', 'user_id', 'user'))
 
