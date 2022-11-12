@@ -1,7 +1,6 @@
 from init import db, ma
 from marshmallow import fields
 from sqlalchemy import ForeignKey
-# from models.user import User, UserSchema
 
 
 class Address(db.Model):

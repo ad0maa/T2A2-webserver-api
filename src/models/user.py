@@ -21,5 +21,4 @@ class UserSchema(ma.Schema):
         fields = ('id', 'user_name', 'email', 'password', 'address', 'admin')
         ordered = True
 
-    address = fields.Nested('AddressSchema')
-
+    address = fields.Nested('AddressSchema' , many=True, exclude = ('user','user_id'))
