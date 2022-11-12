@@ -72,6 +72,20 @@ def update_product(id):
     else:
         return {'error': f'No item found with id {id}'}, 404
 
+# Route to delete product from database if user is admin
+@product_bp.route('/delete/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_product(id):
+    admin_auth()
+    stmt = db.select(Product).filter_by(id=id)
+    product = db.session.scalar(stmt)
+    if product:
+        db.session.delete(product)
+        db.session.commit()
+        return {'message': f'Product {product.id} - {product.name} has been deleted successfully.'}, 202
+    else:
+        return {'error': f'No item found with id {id}'}, 404
+
 
 # Search for products by length
 @product_bp.route('/length/<string:query>/<int:length>', methods=['GET'])
