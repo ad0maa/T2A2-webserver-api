@@ -65,7 +65,7 @@ def db_seed():
             state='Victoria',
             post_code=3228,
             country='Australia',
-            phone_number='0421180150',
+            phone='0421180150',
             user= users[0]
         )
     ]

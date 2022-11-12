@@ -1,6 +1,7 @@
 from flask import Blueprint, request, abort, jsonify, make_response
 from init import db, bcrypt
 from models.user import User, UserSchema
+from models.address import Address, AddressSchema
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from datetime import timedelta
@@ -64,6 +65,8 @@ def login():
         return {'error': 'Invalid login details, please try again.'}, 401
 
 # Update user details
+
+
 @user_bp.route('/update/', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update():
@@ -84,6 +87,8 @@ def update():
     return UserSchema(exclude=['password']).dump(user), 200
 
 # Update user by id if user is admin
+
+
 @user_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_user(id):
@@ -103,7 +108,7 @@ def update_user(id):
     db.session.commit()
     return UserSchema(exclude=['password']).dump(user), 200
 
-# delete user
+# Delete User by id if user is admin
 
 
 @user_bp.route('/delete/<int:id>', methods=['DELETE'])
@@ -115,12 +120,12 @@ def delete(id):
     if user:
         db.session.delete(user)
         db.session.commit()
-        return {'message': f'User {user.name} has been deleted successfully.'}, 202
+        return {'message': f'User {user.user_name} has been deleted successfully.'}, 202
     else:
         return {'error': 'User does not exist'}, 401
 
 
-# create route to add address to user profile
+# Route to add address to user profile
 @user_bp.route('/add_address/', methods=['POST'])
 @jwt_required()
 def add_address():
@@ -128,11 +133,31 @@ def add_address():
     stmt = db.select(User).filter_by(id=user_id)
     user = db.session.scalar(stmt)
     if user:
-        user.address = request.json['address']
-        user.city = request.json['city']
-        user.state = request.json['state']
-        user.zip_code = request.json['zip_code']
+        address = Address(
+        first_name = request.json['first_name'],
+        last_name = request.json['last_name'],
+        street_number = request.json['street_number'],
+        street = request.json['street'],
+        city = request.json['city'],
+        state = request.json['state'],
+        post_code = request.json['post_code'],
+        country = request.json['country'],
+        phone = request.json['phone'],
+        user_id = user_id
+        )
+
+        db.session.add(address)
         db.session.commit()
-        return UserSchema(exclude=['password']).dump(user), 200
+        return AddressSchema().dump(address), 200
     else:
         return {'error': 'Invalid token'}, 401
+
+
+# Route to view all addresses for a user
+@user_bp.route('/view_addresses/', methods=['GET'])
+@jwt_required()
+def view_addresses():
+    user_id = get_jwt_identity()
+    stmt = db.select(Address).filter_by(user_id=user_id)
+    addresses = db.session.scalars(stmt)
+    return AddressSchema(many=True).dump(addresses), 200

@@ -12,7 +12,7 @@ class User(db.Model):
     password = db.Column(db.String(), nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
-    reviews = db.relationship('Review', back_populates='user')
+    reviews = db.relationship('Review', back_populates='user', cascade="all, delete")
     address = db.relationship('Address', back_populates='user')
 
 class UserSchema(ma.Schema):
