@@ -73,7 +73,6 @@ def update():
 
     stmt = db.select(User).filter_by(id=get_jwt_identity())
     user = db.session.scalar(stmt)
-
     data = UserSchema().load(request.json, partial=True)
 
     if user:
@@ -82,8 +81,8 @@ def update():
         if data.get('password'):
             user.password = bcrypt.generate_password_hash(
                 data.get('password')).decode('utf8') or user.password
+            db.session.commit()
 
-    db.session.commit()
     return UserSchema(exclude=['password']).dump(user), 200
 
 # Update user by id if user is admin
@@ -104,8 +103,10 @@ def update_user(id):
         if data.get('password'):
             user.password = bcrypt.generate_password_hash(
                 data.get('password')).decode('utf8') or user.password
-    db.session.add(user)
-    db.session.commit()
+        db.session.add(user)
+        db.session.commit()
+    else:
+        return {'error': 'No user found'}, 404
 
     return UserSchema(exclude=['password']).dump(user), 200
 

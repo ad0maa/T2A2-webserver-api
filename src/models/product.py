@@ -7,11 +7,11 @@ class Product(db.Model):
     __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    description = db.Column(db.Text)
-    length = db.Column(db.Integer)
-    volume = db.Column(db.Integer)
-    price = db.Column(db.Numeric(12,2))
+    name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    length = db.Column(db.Integer, nullable=True)
+    volume = db.Column(db.Integer, nullable = True)
+    price = db.Column(db.Numeric(12,2), nullable=False)
 
     reviews = db.relationship('Review', back_populates='product', cascade="all, delete")
     

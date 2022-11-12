@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify
 from init import db, ma, jwt, bcrypt
 from controllers.cli_commands import db_commands
 from controllers.user_controller import user_bp
 from controllers.product_controller import product_bp
 from marshmallow.exceptions import ValidationError
+from sqlalchemy.exc import IntegrityError
 import os
 
 
@@ -15,6 +16,10 @@ def create_app():
     def bad_request(err):
         return {'error': str(err)}, 400
 
+    @app.errorhandler(401)
+    def unauthorized(err):
+        return {'error': 'You are not authorized to perform this action.'}, 401
+
     @app.errorhandler(404)
     def not_found(err):
         return {'error': str(err)}, 404
@@ -23,17 +28,17 @@ def create_app():
     def not_allowed(err):
         return {'error': str(err)}, 405
 
-    @app.errorhandler(401)
-    def unauthorized(err):
-        return {'error': 'You are not authorized to perform this action.'}, 401
-
-    @app.errorhandler(KeyError)
-    def key_error(err):
-        return {'error', f'The field {err} is required.'}, 400
-
     @app.errorhandler(ValidationError)
     def key_error(err):
         return {'error': err.messages}, 400
+
+    @app.errorhandler(IntegrityError)
+    def integrity_error(err):
+        return {'error': "Entry already exists in database"}, 400
+
+    @jwt.expired_token_loader
+    def my_expired_token_callback(jwt_header, jwt_payload):
+        return jsonify(error ="Access Token expired, please login."), 401
 
     # Test route
 
@@ -55,6 +60,5 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(user_bp)
     app.register_blueprint(product_bp)
-    # app.register_blueprint(review_bp)
 
     return app

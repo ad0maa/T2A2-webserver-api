@@ -51,6 +51,8 @@ def add_product():
     return ProductSchema().dump(product), 200
 
 # Route to update product in database if user is admin
+
+
 @product_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_product(id):
@@ -58,7 +60,7 @@ def update_product(id):
     stmt = db.select(Product).filter_by(id=id)
     product = db.session.scalar(stmt)
     data = ProductSchema().load(request.json)
-    
+
     if product:
         product.name = data.get('name') or product.name
         product.description = data.get('description') or product.description
@@ -68,12 +70,13 @@ def update_product(id):
 
         db.session.commit()
 
-
         return ProductSchema().dump(product), 200
     else:
         return {'error': f'No item found with id {id}'}, 404
 
 # Route to delete product from database if user is admin
+
+
 @product_bp.route('/delete/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_product(id):
@@ -88,9 +91,20 @@ def delete_product(id):
         return {'error': f'No item found with id {id}'}, 404
 
 
-# Search for products by length
+# Search for products by exact length
+@product_bp.route('/length/<int:length>', methods=['GET'])
+def search_length(length):
+    if length:
+        stmt = db.select(Product).filter_by(length=length)
+        product = db.session.scalar(stmt)
+        if product:
+            return ProductSchema().dump(product)
+        else:
+            return {'error': f'No item found with exact length - {length}'}, 404
+
+
 @product_bp.route('/length/<string:query>/<int:length>', methods=['GET'])
-def search_length(query, length):
+def search_length_var(query, length):
     if query == 'min':
         stmt = db.select(Product).filter(and_(Product.length >= length))
         product = db.session.scalars(stmt)
@@ -108,8 +122,22 @@ def search_length(query, length):
 
 
 # Search for products by volume
+@product_bp.route('/volume/<int:volume>', methods=['GET'])
+def search_volume(volume):
+    if volume:
+        stmt = db.select(Product).filter_by(volume=volume)
+        product = db.session.scalar(stmt)
+        if product:
+            return ProductSchema().dump(product)
+        else:
+            return {'error': f'No item found with exact volume - {volume}'}, 404
+
+
+# Search for products by volume
+
+
 @product_bp.route('/volume/<string:query>/<int:volume>', methods=['GET'])
-def search_volume(query, volume):
+def search_volume_var(query, volume):
     if query == 'min':
         stmt = db.select(Product).filter(and_(Product.volume >= volume))
         product = db.session.scalars(stmt)
@@ -117,11 +145,6 @@ def search_volume(query, volume):
 
     elif query == 'max':
         stmt = db.select(Product).filter(and_(Product.volume <= volume))
-        product = db.session.scalars(stmt)
-        return ProductSchema(many=True).dump(product)
-
-    elif query == 'exact':
-        stmt = db.select(Product).filter(and_(Product.volume == volume))
         product = db.session.scalars(stmt)
         return ProductSchema(many=True).dump(product)
 
@@ -136,11 +159,6 @@ def search_price(query, price):
 
     elif query == 'max':
         stmt = db.select(Product).filter(and_(Product.price <= price))
-        product = db.session.scalars(stmt)
-        return ProductSchema(many=True).dump(product)
-
-    elif query == 'exact':
-        stmt = db.select(Product).filter(and_(Product.price == price))
         product = db.session.scalars(stmt)
         return ProductSchema(many=True).dump(product)
 
@@ -179,6 +197,7 @@ def view_reviews(product_id):
     return ReviewSchema(many=True).dump(reviews)
 
 # Delete a review as admin
+
 
 @product_bp.route('/<int:product_id>/review/<int:review_id>', methods=['DELETE'])
 @jwt_required()
