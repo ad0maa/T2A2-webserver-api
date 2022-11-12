@@ -3,11 +3,13 @@ from init import db, bcrypt
 from models.user import User, UserSchema
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from datetime import timedelta
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 # Authorization Functions
+
 
 def admin_auth():
     stmt = db.select(User).filter_by(id=get_jwt_identity())
@@ -34,7 +36,7 @@ def view_all():
 def register():
     try:
         user = User(
-            name=request.json['name'],
+            user_name=request.json['user_name'],
             email=request.json['email'],
             password=bcrypt.generate_password_hash(
                 request.json['password']).decode('utf8')
@@ -49,21 +51,19 @@ def register():
         return {'Error': 'Email address registered, please login.'}, 409
 
 
-# log in and authorize user
+# Log in and authorize user
 @user_bp.route('/login/', methods=['POST'])
 def login():
     user = User.query.filter_by(
         email=request.json['email']).first()
     if user and bcrypt.check_password_hash(user.password, request.json['password']):
         access_token = create_access_token(
-            identity=user.id)
+            identity=user.id, expires_delta=timedelta(days=30))
         return {'token': access_token}, 200
     else:
         return {'error': 'Invalid login details, please try again.'}, 401
 
-# update user details
-
-
+# Update user details
 @user_bp.route('/update/', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update():
@@ -74,11 +74,31 @@ def update():
     data = UserSchema().load(request.json, partial=True)
 
     if user:
-        user.name = data.get('name') or user.name
+        user.user_name = data.get('user_name') or user.user_name
         user.email = data.get('email') or user.email
         if data.get('password'):
             user.password = bcrypt.generate_password_hash(
-            data.get('password')).decode('utf8') or user.password
+                data.get('password')).decode('utf8') or user.password
+
+    db.session.commit()
+    return UserSchema(exclude=['password']).dump(user), 200
+
+# Update user by id if user is admin
+@user_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+def update_user(id):
+    admin_auth()
+    stmt = db.select(User).filter_by(id=id)
+    user = db.session.scalar(stmt)
+
+    data = UserSchema().load(request.json, partial=True)
+
+    if user:
+        user.user_name = data.get('user_name') or user.user_name
+        user.email = data.get('email') or user.email
+        if data.get('password'):
+            user.password = bcrypt.generate_password_hash(
+                data.get('password')).decode('utf8') or user.password
 
     db.session.commit()
     return UserSchema(exclude=['password']).dump(user), 200
