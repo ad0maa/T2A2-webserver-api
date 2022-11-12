@@ -31,6 +31,48 @@ def search_id(id):
         return {'error': f'No item found with id {id}'}, 404
 
 
+# Route to add new product to database if user is admin
+@product_bp.route('/add', methods=['POST'])
+@jwt_required()
+def add_product():
+    admin_auth()
+    data = ProductSchema().load(request.json)
+    product = Product(
+        name=request.json['name'],
+        description=request.json['description'],
+        length=request.json['length'],
+        volume=request.json['volume'],
+        price=request.json['price'],
+    )
+
+    db.session.add(product)
+    db.session.commit()
+
+    return {'message': f'Product - {product.name} has been added successfully.'}, 201
+
+# Route to update product in database if user is admin
+@product_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+def update_product(id):
+    admin_auth()
+    stmt = db.select(Product).filter_by(id=id)
+    product = db.session.scalar(stmt)
+    data = ProductSchema().load(request.json)
+    
+    if product:
+        product.name = data.get('name') or product.name
+        product.description = data.get('description') or product.description
+        product.length = data.get('length') or product.length
+        product.volume = data.get('volume') or product.volume
+        product.price = data.get('price') or product.price
+
+        db.session.commit()
+
+        return {'message': f'Product - {product.name} has been updated successfully.'}, 200
+    else:
+        return {'error': f'No item found with id {id}'}, 404
+
+
 # Search for products by length
 @product_bp.route('/length/<string:query>/<int:length>', methods=['GET'])
 def search_length(query, length):
@@ -113,25 +155,6 @@ def create(product_id):
     else:
         return {'error': f'No product found with id {id}'}, 404
 
-
-
-# Route to add new product to database if user is admin
-@product_bp.route('/add', methods=['POST'])
-@admin_auth
-def add_product():
-    data = ProductSchema().load(request.json)
-    product = Product(
-        name=request.json['name'],
-        length=request.json['length'],
-        volume=request.json['volume'],
-        price=request.json['price'],
-        image=request.json['image']
-    )
-
-    db.session.add(product)
-    db.session.commit()
-
-    return ProductSchema().dump(product), 201
 
 # Returns all reviews for a product
 @product_bp.route('/<int:product_id>/review', methods=['GET'])

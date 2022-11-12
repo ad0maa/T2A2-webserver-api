@@ -19,5 +19,5 @@ class Product(db.Model):
 class ProductSchema(ma.Schema):
 
     class Meta:
-        fields = ('id', 'name', 'description', 'format_length','volume', 'price')
+        fields = ('id', 'name', 'description', 'length','volume', 'price')
         ordered = True
