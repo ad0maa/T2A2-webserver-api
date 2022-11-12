@@ -1,7 +1,7 @@
 from init import db, ma
 from marshmallow import fields
 from sqlalchemy import ForeignKey
-from models.user import User, UserSchema
+# from models.user import User, UserSchema
 
 
 class Address(db.Model):
@@ -19,7 +19,7 @@ class Address(db.Model):
     phone = db.Column(db.String(30), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    user = db.relationship('User', back_populates='address', cascade="all, delete")
+    user = db.relationship('User', back_populates='address')
 
 
 class AddressSchema(ma.Schema):
