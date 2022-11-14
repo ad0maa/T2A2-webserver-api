@@ -8,6 +8,7 @@ from datetime import timedelta
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
+address_bp = Blueprint('address', __name__, url_prefix='/user/address')
 
 # Authorization Functions
 
@@ -46,7 +47,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        return UserSchema(exclude=['password']).dump(user), 201
+        return UserSchema(exclude=['password', 'address']).dump(user), 201
 
     except IntegrityError:
         return {'Error': 'Email address registered, please login.'}, 409
@@ -128,9 +129,9 @@ def delete(id):
 
 
 # Route to add address to user profile
-@user_bp.route('/add_address/', methods=['POST'])
+@address_bp.route('/new/', methods=['POST'])
 @jwt_required()
-def add_address():
+def new_address():
     user_id = get_jwt_identity()
     stmt = db.select(User).filter_by(id=user_id)
     user = db.session.scalar(stmt)
@@ -155,7 +156,7 @@ def add_address():
         return {'error': 'Invalid token, please login.'}, 401
 
 # Route to update address as admin by id
-@user_bp.route('/update_address/<int:id>', methods=['PUT', 'PATCH'])
+@address_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_address(id):
     admin_auth()
@@ -164,17 +165,18 @@ def update_address(id):
     address = db.session.scalar(stmt)
     data = AddressSchema().load(request.json, partial=True)
     if address:
-        address = Address(
-        first_name = data.get('first_name') or address.first_name,
-        last_name = data.get('last_name') or address.last_name,
-        street_number = data.get('street_number') or address.street_number,
-        street = data.get('street') or address.street,
-        city = data.get('city') or address.city,
-        state = data.get('state') or address.state,
-        post_code = data.get('post_code') or address.post_code,
-        country = data.get('country') or address.country,
-        phone = data.get('phone') or address.phone
-        )
+   
+        address.user_id = id or address.user_id,
+        address.first_name = data.get('first_name') or address.first_name,
+        address.last_name = data.get('last_name') or address.last_name,
+        address.street_number = data.get('street_number') or address.street_number,
+        address.street = data.get('street') or address.street,
+        address.city = data.get('city') or address.city,
+        address.state = data.get('state') or address.state,
+        address.post_code = data.get('post_code') or address.post_code,
+        address.country = data.get('country') or address.country,
+        address.phone = data.get('phone') or address.phone
+        
         db.session.add(address)
         db.session.commit()
         return AddressSchema().dump(address), 200
@@ -182,8 +184,8 @@ def update_address(id):
         return {'error': 'Invalid token, please login.'}, 401
 
 
-# Route to view address for a user by id
-@user_bp.route('/view_address/<int:id>', methods=['GET'])
+# Route to view address for a user by id as admin
+@address_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def view_address(id):
     admin_auth()

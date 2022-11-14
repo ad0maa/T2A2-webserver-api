@@ -1,13 +1,14 @@
 from flask import Flask, jsonify
 from init import db, ma, jwt, bcrypt
 from controllers.cli_commands import db_commands
-from controllers.user_controller import user_bp
+from controllers.user_controller import user_bp, address_bp
 from controllers.product_controller import product_bp
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import IntegrityError
 import os
 
 
+# Init app
 def create_app():
     app = Flask(__name__)
 
@@ -38,10 +39,9 @@ def create_app():
 
     @jwt.expired_token_loader
     def my_expired_token_callback(jwt_header, jwt_payload):
-        return jsonify(error ="Access Token expired, please login."), 401
+        return jsonify(error="Access Token expired, please login."), 401
 
-    # Test route
-
+    # Test route to check if server is running
     @app.route("/")
     def hello_world():
         return "Hello, World!"
@@ -57,8 +57,10 @@ def create_app():
     jwt.init_app(app)
     bcrypt.init_app(app)
 
+    # Register Blueprints for User, Address, Product and CLI Commands
     app.register_blueprint(db_commands)
     app.register_blueprint(user_bp)
     app.register_blueprint(product_bp)
+    app.register_blueprint(address_bp)
 
     return app

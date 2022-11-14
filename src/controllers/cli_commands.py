@@ -57,8 +57,8 @@ def db_seed():
 
     addresses = [
         Address(
-            first_name='John',
-            last_name='Doe',
+            first_name='Michael',
+            last_name='Hughes',
             street_number=20,
             street='Evergreen Terrace',
             city='Torquay',
@@ -66,7 +66,7 @@ def db_seed():
             post_code=3228,
             country='Australia',
             phone='0421180150',
-            user= users[0]
+            user= users[2]
         )
     ]
 

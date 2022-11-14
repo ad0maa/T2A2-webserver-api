@@ -25,7 +25,6 @@ class Review(db.Model):
         'User', back_populates='reviews')
     product = db.relationship(
         'Product', back_populates='reviews')
-# cascades deleted may need to reinstate if issues arise
 
 class ReviewSchema(ma.Schema):
 
