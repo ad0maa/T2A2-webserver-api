@@ -5,8 +5,10 @@ from marshmallow.exceptions import ValidationError
 from sqlalchemy import ForeignKey
 from datetime import datetime
 
-
+# Validation for Review Rating
 VALID_RATINGS = (0, 1, 2, 3, 4, 5)
+
+# Review Model
 
 
 class Review(db.Model):
@@ -26,10 +28,15 @@ class Review(db.Model):
     product = db.relationship(
         'Product', back_populates='reviews')
 
+# Review Schema
+
+
 class ReviewSchema(ma.Schema):
 
-    title = fields.String(required=True, validate= Length(min=1, error="Title cannot be blank"))
-    rating = fields.Integer(validate= OneOf(VALID_RATINGS), error= "Rating must be between 0 and 5")
+    title = fields.String(required=True, validate=Length(
+        min=1, error="Title cannot be blank"))
+    rating = fields.Integer(validate=OneOf(
+        VALID_RATINGS), error="Rating must be between 0 and 5")
     date = fields.DateTime(format='%Y-%m-%d %H:%M:%S')
 
     @validates('rating')
@@ -44,4 +51,4 @@ class ReviewSchema(ma.Schema):
 
     user = fields.Nested('UserSchema', only=['user_name'])
     product = fields.Nested('ProductSchema', only=(
-        'name','price'))
+        'name', 'price'))

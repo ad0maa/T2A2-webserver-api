@@ -2,6 +2,8 @@ from init import db, ma
 from marshmallow import fields
 from sqlalchemy import ForeignKey
 
+# Product Model
+
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -10,14 +12,17 @@ class Product(db.Model):
     name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
     length = db.Column(db.Integer, nullable=True)
-    volume = db.Column(db.Integer, nullable = True)
-    price = db.Column(db.Numeric(12,2), nullable=False)
+    volume = db.Column(db.Integer, nullable=True)
+    price = db.Column(db.Numeric(12, 2), nullable=False)
 
-    reviews = db.relationship('Review', back_populates='product', cascade="all, delete")
-    
+    reviews = db.relationship(
+        'Review', back_populates='product', cascade="all, delete")
+
+# Product Schema
+
 
 class ProductSchema(ma.Schema):
 
     class Meta:
-        fields = ('id', 'name', 'description', 'length','volume', 'price')
+        fields = ('id', 'name', 'description', 'length', 'volume', 'price')
         ordered = True

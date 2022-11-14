@@ -32,6 +32,8 @@ def search_id(id):
 
 
 # Route to add new product to database if user is admin
+
+
 @product_bp.route('/add', methods=['POST'])
 @jwt_required()
 def add_product():
@@ -102,6 +104,8 @@ def search_length(length):
         else:
             return {'error': f'No item found with exact length - {length}'}, 404
 
+# Search for products by min/max length
+
 
 @product_bp.route('/length/<string:query>/<int:length>', methods=['GET'])
 def search_length_var(query, length):
@@ -115,13 +119,9 @@ def search_length_var(query, length):
         product = db.session.scalars(stmt)
         return ProductSchema(many=True).dump(product)
 
-    elif query == 'exact':
-        stmt = db.select(Product).filter(and_(Product.length == length))
-        product = db.session.scalars(stmt)
-        return ProductSchema(many=True).dump(product)
-
-
 # Search for products by volume
+
+
 @product_bp.route('/volume/<int:volume>', methods=['GET'])
 def search_volume(volume):
     if volume:
@@ -133,7 +133,7 @@ def search_volume(volume):
             return {'error': f'No item found with exact volume - {volume}'}, 404
 
 
-# Search for products by volume
+# Search for products by min/max volume
 
 
 @product_bp.route('/volume/<string:query>/<int:volume>', methods=['GET'])
@@ -149,7 +149,7 @@ def search_volume_var(query, volume):
         return ProductSchema(many=True).dump(product)
 
 
-# Search for products by price
+# Search for products by price greater than or less than a given price
 @product_bp.route('/price/<string:query>/<int:price>', methods=['GET'])
 def search_price(query, price):
     if query == 'min':
@@ -165,6 +165,7 @@ def search_price(query, price):
 
 # Reviews
 
+# Create a review for a product
 @product_bp.route('/<int:product_id>/review', methods=['POST'])
 @jwt_required()
 def create(product_id):

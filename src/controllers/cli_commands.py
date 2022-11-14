@@ -8,7 +8,7 @@ from datetime import date
 
 db_commands = Blueprint('db', __name__)
 
-# CLI Commands
+# CLI Commands to create, seed and drop tables
 
 @db_commands.cli.command('create')
 def db_create():

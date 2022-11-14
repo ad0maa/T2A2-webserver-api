@@ -10,7 +10,7 @@ from datetime import timedelta
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 address_bp = Blueprint('address', __name__, url_prefix='/user/address')
 
-# Authorization Functions
+# Authorization Function to check if user is admin
 
 
 def admin_auth():
@@ -137,16 +137,16 @@ def new_address():
     user = db.session.scalar(stmt)
     if user:
         address = Address(
-        first_name = request.json['first_name'],
-        last_name = request.json['last_name'],
-        street_number = request.json['street_number'],
-        street = request.json['street'],
-        city = request.json['city'],
-        state = request.json['state'],
-        post_code = request.json['post_code'],
-        country = request.json['country'],
-        phone = request.json['phone'],
-        user_id = user_id
+            first_name=request.json['first_name'],
+            last_name=request.json['last_name'],
+            street_number=request.json['street_number'],
+            street=request.json['street'],
+            city=request.json['city'],
+            state=request.json['state'],
+            post_code=request.json['post_code'],
+            country=request.json['country'],
+            phone=request.json['phone'],
+            user_id=user_id
         )
 
         db.session.add(address)
@@ -156,6 +156,8 @@ def new_address():
         return {'error': 'Invalid token, please login.'}, 401
 
 # Route to update address as admin by id
+
+
 @address_bp.route('/update/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_address(id):
@@ -165,18 +167,19 @@ def update_address(id):
     address = db.session.scalar(stmt)
     data = AddressSchema().load(request.json, partial=True)
     if address:
-   
+
         address.user_id = id or address.user_id,
         address.first_name = data.get('first_name') or address.first_name,
         address.last_name = data.get('last_name') or address.last_name,
-        address.street_number = data.get('street_number') or address.street_number,
+        address.street_number = data.get(
+            'street_number') or address.street_number,
         address.street = data.get('street') or address.street,
         address.city = data.get('city') or address.city,
         address.state = data.get('state') or address.state,
         address.post_code = data.get('post_code') or address.post_code,
         address.country = data.get('country') or address.country,
         address.phone = data.get('phone') or address.phone
-        
+
         db.session.add(address)
         db.session.commit()
         return AddressSchema().dump(address), 200

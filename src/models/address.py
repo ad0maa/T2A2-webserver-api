@@ -2,6 +2,8 @@ from init import db, ma
 from marshmallow import fields
 from sqlalchemy import ForeignKey
 
+# Address Model
+
 
 class Address(db.Model):
     __tablename__ = 'addresses'
@@ -19,6 +21,8 @@ class Address(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     user = db.relationship('User', back_populates='address')
+
+# Address Schema
 
 
 class AddressSchema(ma.Schema):
