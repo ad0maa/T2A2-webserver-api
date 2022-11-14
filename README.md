@@ -27,10 +27,25 @@ In order to get the database set up and the flask server running there are a few
 - ```source .venv/bin/activate```   (This activates the virtual environment)
 - ```pip install -r requirements.txt```  (This installs the required dependencies)
 
-2. Once the dependencies have been installed, you will need to create a .env file in the /src directory of the project. This file will contain the following variables:
+2. Once in the virtual environment you will need to create the database and tables. To do this run the following commands:
 
-- ```FLASK_APP=app.py```
-- 
+- ```psql```  (This will open the PSQL terminal)
+- ```CREATE DATABASE shaka_surf;```  (This will create the database)
+- ```\c shaka_surf;```  (This will connect to the database)
+- ```CREATE USER db_dev WITH PASSWORD '123456';```  (This will create a user with the username 'db_dev' and password '123456')
+- ``` GRANT ALL PRIVILEGES ON DATABASE shaka_surf TO db_dev;```  (This will grant the user all privileges on the database)
+
+3. Next you need to run the flask server. To do this run the following commands:
+
+- ```flask run``` (This will run the flask server)
+
+4. Now that the server is running, you will need to create and seed the database tables and test data. To do this run the following commands:
+
+- ```flask db create``` (This will create the tables)
+- ```flask db seed``` (This will seed the tables with test data)
+- ```flask db drop``` (This will drop the tables if you have any errors or want to start over with the seed data again)
+
+You should now have everything set up and running to begin testing the API endpoints.
 
 ### Testing
 
