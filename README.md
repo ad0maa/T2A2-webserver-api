@@ -19,6 +19,19 @@
 
 ### Installation
 
+In order to get the database set up and the flask server running there are a few instructions you must first follow.
+
+1. Navigate to the /src directory of the project and run the following commands to install the required dependencies:
+
+- ```python3 -m venv .venv```  (This creates a virtual environment for you to run the program)
+- ```source .venv/bin/activate```   (This activates the virtual environment)
+- ```pip install -r requirements.txt```  (This installs the required dependencies)
+
+2. Once the dependencies have been installed, you will need to create a .env file in the /src directory of the project. This file will contain the following variables:
+
+- ```FLASK_APP=app.py```
+- 
+
 ### Testing
 
 It is recommended to import the Postman collection to test the API endpoints once you have the database set up and flask server running. The Postman collection can be found - [Here](https://documenter.getpostman.com/view/23778116/2s8YerLXCQ).
